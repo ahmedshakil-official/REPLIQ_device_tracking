@@ -24,6 +24,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ['id', 'user']
 
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = User.objects.create_user(**user_data)
+        return Employee.objects.create(user=user, **validated_data)
+
 
 class CompanyManagerSerializer(serializers.ModelSerializer):
     employee = EmployeeSerializer()
