@@ -77,8 +77,12 @@ WSGI_APPLICATION = "REPLIQ_device_tracking.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": 'django.db.backends.mysql',
+        "NAME": "repliq_device_track",
+        "HOST": "localhost",
+        "USER": "root",
+        "PASSWORD": "johnwick.2021",
+        "PORT": 3309
     }
 }
 

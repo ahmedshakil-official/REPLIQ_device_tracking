@@ -18,19 +18,19 @@ class Company(models.Model):
     class Meta:
         ordering = ['name']
 
+
 # create user model for the employee
 class Employee(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    company_managers = models.ManyToManyField('CompanyManager', related_name='employees')
 
     def __str__(self):
         return self.user.username
 
-    class Meta:
-        ordering = ['first_name', 'last_name']
 
 # Create a model for manging multiple company and employees
 class CompanyManager(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -66,6 +66,7 @@ class Device(models.Model):
 
     class Meta:
         ordering = ['name']
+
 
 # Model for tracking device log
 class DeviceLogInfo(models.Model):
