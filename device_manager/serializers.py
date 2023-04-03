@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Company, Employee, CompanyManager, Device, DeviceLogInfo
+from .models import Company, Employee, Device, DeviceLogInfo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,15 +30,6 @@ class CompanySerializer(serializers.ModelSerializer):
         for employee_data in employees_data:
             Employee.objects.create(company=company, **employee_data)
         return company
-
-
-class CompanyManagerSerializer(serializers.ModelSerializer):
-    employee = EmployeeSerializer()
-    company = CompanySerializer()
-
-    class Meta:
-        model = CompanyManager
-        fields = ['id', 'employee', 'company']
 
 
 class DeviceSerializer(serializers.ModelSerializer):

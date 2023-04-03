@@ -2,16 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# Model for specific company
+class Employee(models.Model):
+    name = models.CharField(max_length=50)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    address = models.CharField(max_length=200, default='')
+    company = models.ForeignKey('Company', on_delete=models.CASCADE, default=1)
+
+    def __str__(self):
+        return self.name
+
+
 class Company(models.Model):
     name = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+
     authority = models.CharField(max_length=255)
     authority_email = models.EmailField()
     authority_phone = models.CharField(max_length=15)
     location = models.CharField(max_length=255)
-    # defining employees who will work for this company
-    employees = models.ManyToManyField(User, related_name='companies', through='CompanyManager')
 
     def __str__(self):
         return self.name
@@ -20,25 +28,6 @@ class Company(models.Model):
         ordering = ['name']
 
 
-# create user model for the employee
-class Employee(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company_managers = models.ManyToManyField('CompanyManager', related_name='employees')
-
-    def __str__(self):
-        return self.user.username
-
-
-# Create a model for manging multiple company and employees
-class CompanyManager(models.Model):
-    employee = models.ForeignKey(User, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.employee} - {self.company}'
-
-
-# Device model for storing device information
 class Device(models.Model):
     CATEGORY_PHONE = 'Phone'
     CATEGORY_TABLET = 'Tablet'
@@ -56,9 +45,7 @@ class Device(models.Model):
     model = models.CharField(max_length=255)
     serial_number = models.CharField(max_length=255)
     category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default=CATEGORY_OTHER)
-    # Name of the company providing this device
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    # Employee who is getting this device
     assigned_to = models.ForeignKey(Employee, null=True, blank=True, on_delete=models.SET_NULL)
     assigned_time = models.DateTimeField(auto_now_add=True)
 
@@ -69,7 +56,6 @@ class Device(models.Model):
         ordering = ['name']
 
 
-# Model for tracking device log
 class DeviceLogInfo(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     checked_out_to = models.ForeignKey(Employee, related_name='checked_out_to', on_delete=models.CASCADE)

@@ -3,14 +3,14 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from .models import Company, Employee, CompanyManager, Device, DeviceLogInfo
+from .models import Company, Employee, Device, DeviceLogInfo
 from .serializers import (CompanySerializer,
                           EmployeeSerializer,
-                          CompanyManagerSerializer,
+
                           DeviceSerializer,
                           DeviceLogInfoSerializer)
 
-
+# Views for creating company
 class CompanyListCreateView(generics.ListCreateAPIView):
     serializer_class = CompanySerializer
 
@@ -23,7 +23,7 @@ class CompanyListCreateView(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
+# View for company details and update, delete
 class CompanyDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
@@ -31,7 +31,7 @@ class CompanyDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return get_object_or_404(Company, pk=self.kwargs['pk'])
 
-
+# Employee creation view
 class EmployeeListCreateView(generics.ListCreateAPIView):
     serializer_class = EmployeeSerializer
 
@@ -44,6 +44,7 @@ class EmployeeListCreateView(generics.ListCreateAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+# Employee retrieve, update and delete view
 
 class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()
@@ -52,25 +53,6 @@ class EmployeeDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return get_object_or_404(Employee, pk=self.kwargs['pk'])
 
-
-class CompanyManagerListCreateView(generics.ListCreateAPIView):
-    serializer_class = CompanyManagerSerializer
-
-    def get_queryset(self):
-        return CompanyManager.objects.all()
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class CompanyManagerDetailView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CompanyManagerSerializer
-
-    def get_object(self):
-        return get_object_or_404(CompanyManager, pk=self.kwargs['pk'])
 
 
 class DeviceListCreateView(generics.ListCreateAPIView):
