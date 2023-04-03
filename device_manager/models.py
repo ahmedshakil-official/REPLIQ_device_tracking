@@ -9,6 +9,7 @@ class Company(models.Model):
     authority = models.CharField(max_length=255)
     authority_email = models.EmailField()
     authority_phone = models.CharField(max_length=15)
+    location = models.CharField(max_length=255)
     # defining employees who will work for this company
     employees = models.ManyToManyField(User, related_name='companies', through='CompanyManager')
 

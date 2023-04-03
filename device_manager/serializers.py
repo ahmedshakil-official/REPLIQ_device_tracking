@@ -9,25 +9,27 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email']
 
 
-class CompanySerializer(serializers.ModelSerializer):
-    employees = UserSerializer(many=True)
-
-    class Meta:
-        model = Company
-        fields = ['id', 'name', 'address', 'authority', 'authority_email', 'authority_phone', 'employees']
-
-
 class EmployeeSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    user = serializers.StringRelatedField(source='username')
 
     class Meta:
         model = Employee
-        fields = ['id', 'user']
+        fields = '__all__'
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    employees = EmployeeSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'location', 'employees']
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = User.objects.create_user(**user_data)
-        return Employee.objects.create(user=user, **validated_data)
+        employees_data = validated_data.pop('employees')
+        company = Company.objects.create(**validated_data)
+        for employee_data in employees_data:
+            Employee.objects.create(company=company, **employee_data)
+        return company
 
 
 class CompanyManagerSerializer(serializers.ModelSerializer):
